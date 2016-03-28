@@ -1,4 +1,4 @@
-function RefreshDashboardData() {
+function RefreshSwitchData() {
     clearInterval($.refreshTimer);
     var jurl = $.domoticzurl + "/json.htm?type=devices&jsoncallback=?";
     $.getJSON(jurl, {
@@ -8,28 +8,34 @@ function RefreshDashboardData() {
             if (typeof data.result != 'undefined') {
                 $.each(data.result, function(i, item) {
                     for (var ii = 0, len = $.PageDashboardArray.length; ii < len; ii++) {
-                        if ($.PageDashboardArray[ii][0] === item.idx) { // Domoticz idx number
-                            var vtype = $.PageDashboardArray[ii][1]; // Domotitcz type (like Temp, Humidity)
-                            var vlabel = $.PageDashboardArray[ii][2]; // cell number from HTML layout
-                            var vdesc = $.PageDashboardArray[ii][3]; // description 
-                            var vattr = $.PageDashboardArray[ii][4]; // extra css attributes
-                            var vchart = $.PageDashboardArray[ii][4]; // extra css attributes
-                            var vchartcolor = $.PageDashboardArray[ii][5]; // alarm value to turn text to red
-                            var valarm = $.PageDashboardArray[ii][6]; // alarm value to turn text to red
-                            var vdata = item[vtype];
+                        if ($.PageDashboardArray[ii].idx === item.idx) { // Domoticz idx number
+                            var element = $.PageDashboardArray[ii];
+                            var jsonField = element.jsonField; // Domotitcz type (like Temp, Humidity)
+                            var cellId = element.cell; // cell number from HTML layout
+                            var label = element.label; // description
+                            var pushButton = (typeof element.pushButton == 'undefined') ? false : element.pushButton;
+                            var button = (typeof element.button == 'undefined') ? false : element.button;
+                            var type = element.type;
+                            var arrow = (typeof element.arrow == 'undefined') ? false : element.arrow;
+                            var extraCss = (typeof element.extracss == 'undefined') ? false : element.extracss;
+                            var donut = (typeof element.donut == 'undefined') ? false : element.donut;
+                            var donutColor = element.donutColor;
+
+                            var alarmThreshold = element.alarmThreshold; // alarm value to turn text to red
+                            var vdata = item[jsonField];
                             var vunit = "";
 
-                            if (vattr != 'scene' && vattr != 'group') {
+                            if (typeof type == 'undefined' || (type != 'scene' && type != 'group')) {
                                 if (typeof vdata == 'undefined') {
                                     vdata = "??";
                                 } else {
                                     // remove too much text
                                     //vdata=new String(vdata).split("Watt",1)[0];
                                     //vdata=new String(vdata).split("kWh",1)[0];
-                                    if (vtype == "Temp") {
+                                    if (jsonField == "Temp") {
                                         vunit = $.degreesUnit;
                                     }
-                                    if (vtype == "Humidity") {
+                                    if (jsonField == "Humidity") {
                                         vunit = $.percentUnit;
                                     }
                                 }
@@ -37,50 +43,51 @@ function RefreshDashboardData() {
                                 // create switchable value when item is switch
                                 switchclick = '';
                                 if (item.Protected == false) {
-                                    if (vdata == 'Off' || vattr == 'onbutton') {
+                                    if (vdata == 'Off' || œ == true) {
                                         switchclick = 'onclick="SwitchToggle(' + item.idx + ', \'On\');"';
                                     } else if (vdata == 'On') {
                                         switchclick = 'onclick="SwitchToggle(' + item.idx + ', \'Off\');"';
                                     }
                                 }
 
-                                // if alarm threshold is defined, make value red 
+                                // if alarm threshold is defined, make value red
                                 alarmcss = '';
-                                if (typeof valarm != 'undefined') {
-                                    if (eval(vdata + valarm)) { // note orig:  vdata > alarm
+                                if (typeof alarmThreshold != 'undefined') {
+                                    if (eval(vdata + alarmThreshold)) { // note orig:  vdata > alarm
                                         alarmcss = ';color:red;';
                                     }
                                 }
-                                // if extra css attributes
-                                if (typeof vattr == 'undefined') {
-                                    $('#' + vlabel).html('<div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
-                                } else {
-                                    if (vattr == 'arrow') {
-                                        if (vdata == 'Off') {
-                                            $('#' + vlabel).html('<img src="images/flatz/down.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
-                                        } else {
-                                            $('#' + vlabel).html('<img src="images/flatz/up.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
-                                        }
-                                    } else if (vattr == 'onbutton') {
-                                        $('#' + vlabel).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-                                    } else {
-                                        if (vattr == 'button') {
-                                            if (vdata == 'Off') {
-                                                $('#' + vlabel).html('<div class="switch switch-blue" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
 
-                                            } else {
-                                                $('#' + vlabel).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-                                            }
-                                        } else {
-                                            $('#' + vlabel).html('<div ' + switchclick + ' style=' + vattr + alarmcss + '>' + vdata + ' ' + vunit + '</div>');
-                                        }
+
+                                if (arrow) {
+                                    if (vdata == 'Off') {
+                                        $('#cell' + cellId).html('<img src="images/flatz/down.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
+                                    } else {
+                                        $('#cell' + cellId).html('<img src="images/flatz/up.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
                                     }
                                 }
 
-                                $('#desc_' + vlabel).html(vdesc);
-                                if (typeof vchart != 'undefined') {
+                                if (pushButton) {
+                                    $('#cell' + cellId).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
+                                }
 
-                                    $('#' + vchart).highcharts({
+                                if (button) {
+                                    if (vdata == 'Off') {
+                                        $('#cell' + cellId).html('<div class="switch switch-blue" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
+                                    } else {
+                                        $('#cell' + cellId).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
+                                    }
+                                }
+
+                                if (!arrow && !pushButton && !button) {
+                                  var display=(vunit != "") ? vdata + ' ' + vunit : vdata;
+                                  $('#cell' + cellId).html('<div ' + switchclick + ' style=' + extraCss + alarmcss + '>' + display + '</div>');
+                                }
+
+                                $('#desc_cell' + cellId).html(label);
+                                if (donut) {
+
+                                    $('#cell' + cellId + 'donut').highcharts({
                                         chart: {
                                             margin: [30, 30, 30, 30],
                                             backgroundColor: null,
@@ -105,9 +112,9 @@ function RefreshDashboardData() {
                                             name: 'Income',
                                             innerSize: '65%',
                                             data: [{
-                                                name: vdesc,
+                                                name: label,
                                                 y: parseInt(vdata),
-                                                color: vchartcolor
+                                                color: donutColor
                                             }, {
                                                 name: 'total',
                                                 y: (100 - vdata),
@@ -128,12 +135,12 @@ function RefreshDashboardData() {
             }
         });
 
-    RefreshScenesDashboard();
+    RefreshScenes();
 
     $.refreshTimer = setInterval(RefreshDashboardData, 8000);
 }
 
-function RefreshScenesDashboard() {
+function RefreshScenes() {
     var jurl_scenes = $.domoticzurl + "/json.htm?type=scenes&jsoncallback=?";
     $.getJSON(jurl_scenes, {
             format: "json"
@@ -145,7 +152,7 @@ function RefreshScenesDashboard() {
                         if ($.PageDashboardArray[ii][0] === item.idx) { // Domoticz idx number
                             var vtype = $.PageDashboardArray[ii][1]; // Domotitcz type (like Temp, Humidity)
                             var vlabel = $.PageDashboardArray[ii][2]; // cell number from HTML layout
-                            var vdesc = $.PageDashboardArray[ii][3]; // description 
+                            var vdesc = $.PageDashboardArray[ii][3]; // description
                             var vattr = $.PageDashboardArray[ii][4]; // extra css attributes
                             var vchart = $.PageDashboardArray[ii][4]; // extra css attributes
                             var vchartcolor = $.PageDashboardArray[ii][5]; // alarm value to turn text to red
@@ -155,7 +162,7 @@ function RefreshScenesDashboard() {
 
                             // create switchable value when item is switch
                             switchclick = '';
-                            // if alarm threshold is defined, make value red 
+                            // if alarm threshold is defined, make value red
                             alarmcss = '';
                             if (typeof valarm != 'undefined') {
                                 if (eval(vdata + valarm)) { // note orig:  vdata > alarm
@@ -191,162 +198,6 @@ function RefreshScenesDashboard() {
             }
         });
 }
-
-
-
-function RefreshScenesSwitch() {
-    var jurl_scenes = $.domoticzurl + "/json.htm?type=scenes&jsoncallback=?";
-    $.getJSON(jurl_scenes, {
-            format: "json"
-        },
-        function(data) {
-            if (typeof data.result != 'undefined') {
-                $.each(data.result, function(i, item) {
-                    for (var ii = 0, len = $.PageSwitchArray.length; ii < len; ii++) {
-                        if ($.PageSwitchArray[ii][0] === item.idx) { // Domoticz idx number
-                            var vtype = $.PageSwitchArray[ii][1]; // Domotitcz type (like Temp, Humidity)
-                            var vlabel = $.PageSwitchArray[ii][2]; // cell number from HTML layout
-                            var vdesc = $.PageSwitchArray[ii][3]; // description 
-                            var vattr = $.PageSwitchArray[ii][4]; // extra css attributes
-                            var vchart = $.PageSwitchArray[ii][4]; // extra css attributes
-                            var vchartcolor = $.PageSwitchArray[ii][5]; // alarm value to turn text to red
-                            var valarm = $.PageSwitchArray[ii][6]; // alarm value to turn text to red
-                            var vdata = item[vtype];
-                            var vunit = "";
-
-                            // create switchable value when item is switch
-                            switchclick = '';
-                            // if alarm threshold is defined, make value red 
-                            alarmcss = '';
-                            if (typeof valarm != 'undefined') {
-                                if (eval(vdata + valarm)) { // note orig:  vdata > alarm
-                                    alarmcss = ';color:red;';
-                                }
-                            }
-
-                            // if extra css attributes
-                            if (typeof vattr == 'undefined') {
-                                $('#' + vlabel).html('<div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
-                            } else {
-                                if (vattr == 'scene') {
-                                    switchclick = 'onclick="SwitchScene(' + item.idx + ', \'On\');"';
-                                    $('#' + vlabel).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-                                } else if (vattr == 'group') {
-                                    if (vdata == 'Off') {
-                                        switchclick = 'onclick="SwitchScene(' + item.idx + ', \'On\');"';
-                                    } else if (vdata == 'On') {
-                                        switchclick = 'onclick="SwitchScene(' + item.idx + ', \'Off\');"';
-                                    }
-                                    if (vdata == 'Off') {
-                                        $('#' + vlabel).html('<div class="switch switch-blue" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-
-                                    } else {
-                                        $('#' + vlabel).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-                                    }
-                                }
-                            }
-                            $('#desc_' + vlabel).html(vdesc);
-                        }
-                    }
-                });
-            }
-        });
-}
-
-function RefreshSwitchData() {
-    clearInterval($.refreshTimer);
-
-    var jurl = $.domoticzurl + "/json.htm?type=devices&jsoncallback=?";
-    $.getJSON(jurl, {
-            format: "json"
-        },
-        function(data) {
-            if (typeof data.result != 'undefined') {
-                $.each(data.result, function(i, item) {
-                    for (var ii = 0, len = $.PageSwitchArray.length; ii < len; ii++) {
-                        if ($.PageSwitchArray[ii][0] === item.idx) { // Domoticz idx number
-                            var vtype = $.PageSwitchArray[ii][1]; // Domotitcz type (like Temp, Humidity)
-                            var vlabel = $.PageSwitchArray[ii][2]; // cell number from HTML layout
-                            var vdesc = $.PageSwitchArray[ii][3]; // description 
-                            var vattr = $.PageSwitchArray[ii][4]; // extra css attributes
-                            var vchart = $.PageSwitchArray[ii][4]; // extra css attributes
-                            var vchartcolor = $.PageSwitchArray[ii][5]; // alarm value to turn text to red
-                            var valarm = $.PageSwitchArray[ii][6]; // alarm value to turn text to red
-                            var vdata = item[vtype];
-                            var vunit = "";
-
-                            if (vattr != 'scene' || vattr != 'group') {
-                                if (typeof vdata == 'undefined') {
-                                    vdata = "??";
-                                } else {
-                                    // remove too much text
-                                    vdata = new String(vdata).split(" Watt", 1)[0];
-                                    vdata = new String(vdata).split(" kWh", 1)[0];
-
-                                    if (vtype == "Temp") {
-                                        vunit = $.degreesUnit;
-                                    }
-                                    if (vtype == "Humidity") {
-                                        vunit = $.percentUnit;
-                                    }
-                                }
-
-                                // create switchable value when item is switch
-                                switchclick = '';
-                                if (item.Protected == false) {
-                                    if (vdata == 'Off' || vattr == 'onbutton') {
-                                        switchclick = 'onclick="SwitchToggle(' + item.idx + ', \'On\');"';
-                                    } else if (vdata == 'On') {
-                                        switchclick = 'onclick="SwitchToggle(' + item.idx + ', \'Off\');"';
-                                    }
-                                }
-
-                                // if alarm threshold is defined, make value red 
-                                alarmcss = '';
-                                if (typeof valarm != 'undefined') {
-                                    if (eval(vdata + valarm)) { // note orig:  vdata > alarm
-                                        alarmcss = ';color:red;';
-                                    }
-                                }
-
-                                // if extra css attributes
-                                if (typeof vattr == 'undefined') {
-                                    $('#' + vlabel).html('<div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
-                                } else {
-                                    if (vattr == 'arrow') {
-                                        if (vdata == 'Off') {
-                                            $('#' + vlabel).html('<img src="images/flatz/down.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
-                                        } else {
-                                            $('#' + vlabel).html('<img src="images/flatz/up.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
-                                        }
-                                    } else if (vattr == 'onbutton') {
-                                        $('#' + vlabel).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-                                    } else {
-                                        if (vattr == 'button') {
-                                            if (vdata == 'Off') {
-                                                $('#' + vlabel).html('<div class="switch switch-blue" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-
-                                            } else {
-                                                $('#' + vlabel).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-                                            }
-                                        } else {
-                                            $('#' + vlabel).html('<div ' + switchclick + ' style=' + vattr + alarmcss + '>' + vdata + ' ' + vunit + '</div>');
-                                        }
-                                    }
-                                }
-                                $('#desc_' + vlabel).html(vdesc);
-                            }
-                        }
-                    }
-                });
-            }
-        });
-
-    RefreshScenesSwitch();
-
-    $.refreshTimer = setInterval(RefreshSwitchData, 8000);
-}
-
 
 function RefreshLightData() {
     //clearInterval($.refreshTimerLight);
@@ -370,7 +221,7 @@ function RefreshLightData() {
                             //example: ['11', 'Dimmer', 'cell7', 'Licht - Tafel 1'],
                             var vtype = $.LightArray[bb][1]; // type description (like Dimmer)
                             var vlabel = $.LightArray[bb][2]; // cell number from HTML layout
-                            var vdesc = $.LightArray[bb][3]; // description 
+                            var vdesc = $.LightArray[bb][3]; // description
 
                             $('#desc_' + vlabel).html(vdesc + " | " + switchLevel + $.percentUnit);
 
@@ -485,7 +336,7 @@ function changeColorTriggered(e) {
 function changeColor(e, elementName) {
     clearInterval($.refreshchangeColorTriggered);
     //console.log(hexToRgb(e.value).r+" "+hexToRgb(e.value).g+" "+hexToRgb(e.value).b);
-    //process color change 
+    //process color change
     // http://192.168.1.88:8080/json.htm?type=command&param=setcolbrightnessvalue&idx=11&hue=54&brightness=100&iswhite=false
     var slidername = "#slider_" + elementName.replace("color_", "");
     var sliderValue = $(slidername).slider('value');
@@ -522,7 +373,7 @@ function RefreshGraphData() {
         var xIDX = $.GraphTemperatureArray[aa][0]; // idx of temp device
         var vtype = $.GraphTemperatureArray[aa][1]; // Domotitcz type (like Temp, Humidity)
         var vlabel = $.GraphTemperatureArray[aa][3]; // cell id from HTML layout
-        var vdesc = $.GraphTemperatureArray[aa][4]; // description 
+        var vdesc = $.GraphTemperatureArray[aa][4]; // description
         var vchart = $.GraphTemperatureArray[aa][5]; // chart id from HTML layout
         var vchartcolor = $.GraphTemperatureArray[aa][6]; // color for chart
         var vrange = $.GraphTemperatureArray[aa][2]; // range (day, week, month)
@@ -582,7 +433,7 @@ function createGraph(arrData, nameData, vchart, vunit, vchartcolor, vdesc, vlabe
     $('#desc_' + vlabel).html(vdesc);
 
     console.log('#' + vchart + ' ' + vdesc);
-    //console.log(arrData);	
+    //console.log(arrData);
 
     $('#' + vchart).highcharts({
         chart: {
@@ -712,7 +563,7 @@ function RefreshLogData() {
 
 
 /**
- * function to load a given css file 
+ * function to load a given css file
  */
 loadCSS = function(href) {
     var cssLink = $("<link rel='stylesheet' type='text/css' href='" + href + "'>");
@@ -720,7 +571,7 @@ loadCSS = function(href) {
 };
 
 /**
- * function to load a given js file 
+ * function to load a given js file
  */
 loadJS = function(src) {
     var jsLink = $("<script type='text/javascript' src='" + src + "'>");
@@ -765,7 +616,7 @@ function SwitchScene(idx, switchcmd) {
                 type: 'success'
             });
 
-            RefreshScenesSwitch();
+            RefreshScenes();
         },
         error: function() {
             //console.log('ERROR');

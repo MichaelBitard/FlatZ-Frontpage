@@ -21,7 +21,7 @@
     <script type="text/javascript" src="js/methods.js"></script>
     <script type="text/javascript" src="js/jquery.stayInWebApp.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
-	
+
     <style type="text/css">
         body {
             padding-top: 60px;
@@ -146,7 +146,7 @@
                 <div class="dash-unit">
                     <dtitle id="desc_cell7"></dtitle>
                     <hr>
-                    <div id="badkamer" style="height: 11.313em;width: 11.313em;margin: auto;"></div>
+                    <div id="cell7donut" style="height: 11.313em;width: 11.313em;margin: auto;"></div>
                     <h2 id="cell7"></h2>
                     <span class="text" id="cell70" style="float:right;padding-right:10px;font-size: 10px;color: #9E9E9E;" />
                 </div>
@@ -156,7 +156,7 @@
                 <div class="dash-unit">
                     <dtitle id="desc_cell8"></dtitle>
                     <hr>
-                    <div id="woonkamer" style="height: 11.313em;width: 11.313em;margin: auto;"></div>
+                    <div id="cell8donut" style="height: 11.313em;width: 11.313em;margin: auto;"></div>
                     <h2 id="cell8"></h2>
                     <span class="text" id="cell80" style="float:right;padding-right:10px;font-size: 10px;color: #9E9E9E;" />
                 </div>
@@ -166,7 +166,7 @@
                 <div class="dash-unit">
                     <dtitle id="desc_cell10"></dtitle>
                     <hr>
-                    <div id="buiten" style="height: 11.313em;width: 11.313em;margin: auto;"></div>
+                    <div id="cell10donut" style="height: 11.313em;width: 11.313em;margin: auto;"></div>
                     <h2 id="cell10"></h2>
                     <span class="text" id="cell100" style="float:right;padding-right:10px;font-size: 10px;color: #9E9E9E;" />
                 </div>
@@ -246,56 +246,8 @@
             loadCSS("css/" + $.theme);
 
             console.log($.domoticzurl);
-            RefreshDashboardData();
+            RefreshSwitchData();
         });
-
-        function SwitchToggle(idx, switchcmd) {
-            $.ajax({
-                url: $.domoticzurl + "/json.htm?type=command&param=switchlight" + "&idx=" + idx + "&switchcmd=" + switchcmd + "&level=0",
-                async: false,
-                dataType: 'json',
-                success: function() {
-                    //console.log('SUCCES');
-                    var n = noty({
-                        text: 'Switch toggled',
-                        type: 'success'
-                    });
-					RefreshDashboardData();
-                },
-                error: function() {
-                    console.log('ERROR');
-                    var n = noty({
-                        text: 'Failed to toggle switch...',
-                        type: 'error'
-                    });
-                }
-            });
-        }
-				
-		function SwitchScene(idx, switchcmd) {
-			//console.log($.domoticzurl + "/json.htm?type=command&param=switchscene" + "&idx=" + idx + "&switchcmd=" + switchcmd + "&passcode=&jsoncallback=?");
-			$.ajax({
-				url: $.domoticzurl + "/json.htm?type=command&param=switchscene" + "&idx=" + idx + "&switchcmd=" + switchcmd + "&passcode=&jsoncallback=?",
-				async: false,
-				dataType: 'json',
-				success: function() {
-					//console.log('SUCCES');
-					var n = noty({
-						text: 'Switch toggled',
-						type: 'success'
-					});
-
-					RefreshScenesDashboard();
-				},
-				error: function() {
-					//console.log('ERROR');
-					var n = noty({
-						text: 'Failed to toggle switch...',
-						type: 'error'
-					});
-				}
-			});
-		}
     </script>
 </body>
 
