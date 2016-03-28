@@ -10,7 +10,7 @@ function RefreshSwitchData() {
                     for (var ii = 0, len = $.PageDashboardArray.length; ii < len; ii++) {
                       RefreshSwitch(item, $.PageDashboardArray[ii]);
                     }
-                    for (var ii = 0, len = $.PageSwitchArray.length; ii < len; ii++)
+                    for (var ii = 0, len = $.PageSwitchArray.length; ii < len; ii++) {
                       RefreshSwitch(item, $.PageSwitchArray[ii]);
                     }
                 });
