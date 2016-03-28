@@ -37,6 +37,7 @@ function RefreshSwitch(item, element) {
       var extraCss = (typeof element.extracss == 'undefined') ? false : element.extracss;
       var donut = (typeof element.donut == 'undefined') ? false : element.donut;
       var donutColor = element.donutColor;
+      var maxDonut = (typeof element.maxDonut == 'undefined') ? 100 : element.maxDonut;
 
       var alarmThreshold = element.alarmThreshold; // alarm value to turn text to red
       var vdata = item[jsonField];
@@ -118,7 +119,8 @@ function RefreshSwitch(item, element) {
                   },
                   tooltip: {
                       formatter: function() {
-                          return this.point.name + ': ' + this.y + ' %';
+                          var addUnit = vunit === "" ? ' %' : ' ' + vunit;
+                          return this.point.name + ': ' + this.y + addUnit;
                       }
                   },
                   series: [{
@@ -134,7 +136,7 @@ function RefreshSwitch(item, element) {
                           color: donutColor
                       }, {
                           name: 'total',
-                          y: (100 - vdata),
+                          y: (maxDonut - vdata),
                           color: '#3d3d3d'
                       }],
                       dataLabels: {
