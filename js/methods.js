@@ -8,128 +8,10 @@ function RefreshSwitchData() {
             if (typeof data.result != 'undefined') {
                 $.each(data.result, function(i, item) {
                     for (var ii = 0, len = $.PageDashboardArray.length; ii < len; ii++) {
-                        if ($.PageDashboardArray[ii].idx === item.idx) { // Domoticz idx number
-                            var element = $.PageDashboardArray[ii];
-                            var jsonField = element.jsonField; // Domotitcz type (like Temp, Humidity)
-                            var cellId = element.cell; // cell number from HTML layout
-                            var label = element.label; // description
-                            var pushButton = (typeof element.pushButton == 'undefined') ? false : element.pushButton;
-                            var button = (typeof element.button == 'undefined') ? false : element.button;
-                            var type = element.type;
-                            var arrow = (typeof element.arrow == 'undefined') ? false : element.arrow;
-                            var extraCss = (typeof element.extracss == 'undefined') ? false : element.extracss;
-                            var donut = (typeof element.donut == 'undefined') ? false : element.donut;
-                            var donutColor = element.donutColor;
-
-                            var alarmThreshold = element.alarmThreshold; // alarm value to turn text to red
-                            var vdata = item[jsonField];
-                            var vunit = "";
-
-                            if (typeof type == 'undefined' || (type != 'scene' && type != 'group')) {
-                                if (typeof vdata == 'undefined') {
-                                    vdata = "??";
-                                } else {
-                                    // remove too much text
-                                    //vdata=new String(vdata).split("Watt",1)[0];
-                                    //vdata=new String(vdata).split("kWh",1)[0];
-                                    if (jsonField == "Temp") {
-                                        vunit = $.degreesUnit;
-                                    }
-                                    if (jsonField == "Humidity") {
-                                        vunit = $.percentUnit;
-                                    }
-                                }
-
-                                // create switchable value when item is switch
-                                switchclick = '';
-                                if (item.Protected == false) {
-                                    if (vdata == 'Off' || pushButton == true) {
-                                        switchclick = 'onclick="SwitchToggle(' + item.idx + ', \'On\');"';
-                                    } else if (vdata == 'On') {
-                                        switchclick = 'onclick="SwitchToggle(' + item.idx + ', \'Off\');"';
-                                    }
-                                }
-
-                                // if alarm threshold is defined, make value red
-                                alarmcss = '';
-                                if (typeof alarmThreshold != 'undefined') {
-                                    if (eval(vdata + alarmThreshold)) { // note orig:  vdata > alarm
-                                        alarmcss = ';color:red;';
-                                    }
-                                }
-
-
-                                if (arrow) {
-                                    if (vdata == 'Off') {
-                                        $('#cell' + cellId).html('<img src="images/flatz/down.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
-                                    } else {
-                                        $('#cell' + cellId).html('<img src="images/flatz/up.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
-                                    }
-                                }
-
-                                if (pushButton) {
-                                    $('#cell' + cellId).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-                                }
-
-                                if (button) {
-                                    if (vdata == 'Off') {
-                                        $('#cell' + cellId).html('<div class="switch switch-blue" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-                                    } else {
-                                        $('#cell' + cellId).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-                                    }
-                                }
-
-                                if (!arrow && !pushButton && !button) {
-                                  var display=(vunit != "") ? vdata + ' ' + vunit : vdata;
-                                  $('#cell' + cellId).html('<div ' + switchclick + ' style=' + extraCss + alarmcss + '>' + display + '</div>');
-                                }
-
-                                $('#desc_cell' + cellId).html(label);
-                                if (donut) {
-
-                                    $('#cell' + cellId + 'donut').highcharts({
-                                        chart: {
-                                            margin: [30, 30, 30, 30],
-                                            backgroundColor: null,
-                                            plotBackgroundColor: 'none',
-                                        },
-                                        credits: {
-                                            enabled: false
-                                        },
-                                        title: {
-                                            text: null
-                                        },
-                                        tooltip: {
-                                            formatter: function() {
-                                                return this.point.name + ': ' + this.y + ' %';
-                                            }
-                                        },
-                                        series: [{
-                                            borderWidth: 2,
-                                            borderColor: '#F1F3EB',
-                                            shadow: false,
-                                            type: 'pie',
-                                            name: 'Income',
-                                            innerSize: '65%',
-                                            data: [{
-                                                name: label,
-                                                y: parseInt(vdata),
-                                                color: donutColor
-                                            }, {
-                                                name: 'total',
-                                                y: (100 - vdata),
-                                                color: '#3d3d3d'
-                                            }],
-                                            dataLabels: {
-                                                enabled: false,
-                                                color: '#000000',
-                                                connectorColor: '#000000'
-                                            }
-                                        }]
-                                    });
-                                }
-                            }
-                        }
+                      RefreshSwitch(item, $.PageDashboardArray[ii]);
+                    }
+                    for (var ii = 0, len = $.PageSwitchArray.length; ii < len; ii++)
+                      RefreshSwitch(item, $.PageSwitchArray[ii]);
                     }
                 });
             }
@@ -138,6 +20,130 @@ function RefreshSwitchData() {
     RefreshScenes();
 
     $.refreshTimer = setInterval(RefreshSwitchData, 8000);
+}
+
+function RefreshSwitch(item, element) {
+  if (element.idx === item.idx) { // Domoticz idx
+      var jsonField = element.jsonField; // Domotitcz type (like Temp, Humidity)
+      var cellId = element.cell; // cell number from HTML layout
+      var label = element.label; // description
+      var pushButton = (typeof element.pushButton == 'undefined') ? false : element.pushButton;
+      var button = (typeof element.button == 'undefined') ? false : element.button;
+      var type = element.type;
+      var arrow = (typeof element.arrow == 'undefined') ? false : element.arrow;
+      var extraCss = (typeof element.extracss == 'undefined') ? false : element.extracss;
+      var donut = (typeof element.donut == 'undefined') ? false : element.donut;
+      var donutColor = element.donutColor;
+
+      var alarmThreshold = element.alarmThreshold; // alarm value to turn text to red
+      var vdata = item[jsonField];
+      var vunit = "";
+
+      if (typeof type == 'undefined' || (type != 'scene' && type != 'group')) {
+          if (typeof vdata == 'undefined') {
+              vdata = "??";
+          } else {
+              // remove too much text
+              //vdata=new String(vdata).split("Watt",1)[0];
+              //vdata=new String(vdata).split("kWh",1)[0];
+              if (jsonField == "Temp") {
+                  vunit = $.degreesUnit;
+              }
+              if (jsonField == "Humidity") {
+                  vunit = $.percentUnit;
+              }
+          }
+
+          // create switchable value when item is switch
+          switchclick = '';
+          if (item.Protected == false) {
+              if (vdata == 'Off' || pushButton == true) {
+                  switchclick = 'onclick="SwitchToggle(' + item.idx + ', \'On\');"';
+              } else if (vdata == 'On') {
+                  switchclick = 'onclick="SwitchToggle(' + item.idx + ', \'Off\');"';
+              }
+          }
+
+          // if alarm threshold is defined, make value red
+          alarmcss = '';
+          if (typeof alarmThreshold != 'undefined') {
+              if (eval(vdata + alarmThreshold)) { // note orig:  vdata > alarm
+                  alarmcss = ';color:red;';
+              }
+          }
+
+
+          if (arrow) {
+              if (vdata == 'Off') {
+                  $('#cell' + cellId).html('<img src="images/flatz/down.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
+              } else {
+                  $('#cell' + cellId).html('<img src="images/flatz/up.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
+              }
+          }
+
+          if (pushButton) {
+              $('#cell' + cellId).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
+          }
+
+          if (button) {
+              if (vdata == 'Off') {
+                  $('#cell' + cellId).html('<div class="switch switch-blue" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
+              } else {
+                  $('#cell' + cellId).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
+              }
+          }
+
+          if (!arrow && !pushButton && !button) {
+            var display=(vunit != "") ? vdata + ' ' + vunit : vdata;
+            $('#cell' + cellId).html('<div ' + switchclick + ' style=' + extraCss + alarmcss + '>' + display + '</div>');
+          }
+
+          $('#desc_cell' + cellId).html(label);
+          if (donut) {
+
+              $('#cell' + cellId + 'donut').highcharts({
+                  chart: {
+                      margin: [30, 30, 30, 30],
+                      backgroundColor: null,
+                      plotBackgroundColor: 'none',
+                  },
+                  credits: {
+                      enabled: false
+                  },
+                  title: {
+                      text: null
+                  },
+                  tooltip: {
+                      formatter: function() {
+                          return this.point.name + ': ' + this.y + ' %';
+                      }
+                  },
+                  series: [{
+                      borderWidth: 2,
+                      borderColor: '#F1F3EB',
+                      shadow: false,
+                      type: 'pie',
+                      name: 'Income',
+                      innerSize: '65%',
+                      data: [{
+                          name: label,
+                          y: parseInt(vdata),
+                          color: donutColor
+                      }, {
+                          name: 'total',
+                          y: (100 - vdata),
+                          color: '#3d3d3d'
+                      }],
+                      dataLabels: {
+                          enabled: false,
+                          color: '#000000',
+                          connectorColor: '#000000'
+                      }
+                  }]
+              });
+          }
+      }
+  }
 }
 
 function RefreshScenes() {
