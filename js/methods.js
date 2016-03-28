@@ -1,3 +1,4 @@
+$.isFrontPage = (window.location.href.indexOf("frontpage.html") !== -1);
 function RefreshSwitchData() {
     clearInterval($.refreshTimer);
     var jurl = $.domoticzurl + "/json.htm?type=devices&jsoncallback=?";
@@ -7,12 +8,14 @@ function RefreshSwitchData() {
         function(data) {
             if (typeof data.result != 'undefined') {
                 $.each(data.result, function(i, item) {
+                  if ($.isFrontPage) {
                     for (var ii = 0, len = $.PageDashboardArray.length; ii < len; ii++) {
                       RefreshSwitch(item, $.PageDashboardArray[ii]);
                     }
-                    for (var ii = 0, len = $.PageSwitchArray.length; ii < len; ii++) {
-                      RefreshSwitch(item, $.PageSwitchArray[ii]);
-                    }
+                  }
+                  for (var ii = 0, len = $.PageSwitchArray.length; ii < len; ii++) {
+                    RefreshSwitch(item, $.PageSwitchArray[ii]);
+                  }
                 });
             }
         });
