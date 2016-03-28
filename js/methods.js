@@ -157,55 +157,63 @@ function RefreshScenes() {
         function(data) {
             if (typeof data.result != 'undefined') {
                 $.each(data.result, function(i, item) {
+                  if ($.isFrontPage) {
                     for (var ii = 0, len = $.PageDashboardArray.length; ii < len; ii++) {
-                        if ($.PageDashboardArray[ii][0] === item.idx) { // Domoticz idx number
-                            var vtype = $.PageDashboardArray[ii][1]; // Domotitcz type (like Temp, Humidity)
-                            var vlabel = $.PageDashboardArray[ii][2]; // cell number from HTML layout
-                            var vdesc = $.PageDashboardArray[ii][3]; // description
-                            var vattr = $.PageDashboardArray[ii][4]; // extra css attributes
-                            var vchart = $.PageDashboardArray[ii][4]; // extra css attributes
-                            var vchartcolor = $.PageDashboardArray[ii][5]; // alarm value to turn text to red
-                            var valarm = $.PageDashboardArray[ii][6]; // alarm value to turn text to red
-                            var vdata = item[vtype];
-                            var vunit = "";
-
-                            // create switchable value when item is switch
-                            switchclick = '';
-                            // if alarm threshold is defined, make value red
-                            alarmcss = '';
-                            if (typeof valarm != 'undefined') {
-                                if (eval(vdata + valarm)) { // note orig:  vdata > alarm
-                                    alarmcss = ';color:red;';
-                                }
-                            }
-
-                            // if extra css attributes
-                            if (typeof vattr == 'undefined') {
-                                $('#' + vlabel).html('<div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
-                            } else {
-                                if (vattr == 'scene') {
-                                    switchclick = 'onclick="SwitchScene(' + item.idx + ', \'On\');"';
-                                    $('#' + vlabel).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-                                } else if (vattr == 'group') {
-                                    if (vdata == 'Off') {
-                                        switchclick = 'onclick="SwitchScene(' + item.idx + ', \'On\');"';
-                                    } else if (vdata == 'On') {
-                                        switchclick = 'onclick="SwitchScene(' + item.idx + ', \'Off\');"';
-                                    }
-                                    if (vdata == 'Off') {
-                                        $('#' + vlabel).html('<div class="switch switch-blue" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-
-                                    } else {
-                                        $('#' + vlabel).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
-                                    }
-                                }
-                            }
-                            $('#desc_' + vlabel).html(vdesc);
-                        }
+                      RefreshScene(item, $.PageDashboardArray[ii]);
                     }
+                  }
+                  for (var ii = 0, len = $.PageSwitchArray.length; ii < len; ii++) {
+                    RefreshScene(item, $.PageSwitchArray[ii]);
+                  }
                 });
             }
         });
+}
+
+function RefreshScene(item, element) {
+  if (element.idx === item.idx) { // Domoticz idx number
+      var jsonField = element.jsonField; // Domotitcz type (like Temp, Humidity)
+      var cellId = element.cell; // cell number from HTML layout
+      var label = element.label; // description
+      var type = element.type;
+
+      var alarmThreshold = element.alarmThreshold;
+      var vdata = item[jsonField];
+      var vunit = "";
+
+      // create switchable value when item is switch
+      switchclick = '';
+      // if alarm threshold is defined, make value red
+      alarmcss = '';
+      if (typeof alarmThreshold != 'undefined') {
+          if (eval(vdata + alarmThreshold)) { // note orig:  vdata > alarm
+              alarmcss = ';color:red;';
+          }
+      }
+
+      // if extra css attributes
+      if (typeof type == 'undefined') {
+          $('#cell' + cellId).html('<div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
+      } else {
+          if (type == 'scene') {
+              switchclick = 'onclick="SwitchScene(' + item.idx + ', \'On\');"';
+              $('#cell' + cellId).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
+          } else if (type == 'group') {
+              if (vdata == 'Off') {
+                  switchclick = 'onclick="SwitchScene(' + item.idx + ', \'On\');"';
+              } else if (vdata == 'On') {
+                  switchclick = 'onclick="SwitchScene(' + item.idx + ', \'Off\');"';
+              }
+              if (vdata == 'Off') {
+                  $('#cell' + cellId).html('<div class="switch switch-blue" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
+
+              } else {
+                  $('#cell' + cellId).html('<div class="switch" style="margin-top:5px;width:60px;"><label class="switch-selection" ><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div></label></div>');
+              }
+          }
+      }
+      $('#desc_cell' + cellId).html(label);
+  }
 }
 
 function RefreshLightData() {
