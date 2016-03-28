@@ -137,7 +137,7 @@ function RefreshSwitchData() {
 
     RefreshScenes();
 
-    $.refreshTimer = setInterval(RefreshDashboardData, 8000);
+    $.refreshTimer = setInterval(RefreshSwitchData, 8000);
 }
 
 function RefreshScenes() {
