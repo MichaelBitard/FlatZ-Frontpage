@@ -43,7 +43,7 @@ function RefreshSwitchData() {
                                 // create switchable value when item is switch
                                 switchclick = '';
                                 if (item.Protected == false) {
-                                    if (vdata == 'Off' || œ == true) {
+                                    if (vdata == 'Off' || pushButton == true) {
                                         switchclick = 'onclick="SwitchToggle(' + item.idx + ', \'On\');"';
                                     } else if (vdata == 'On') {
                                         switchclick = 'onclick="SwitchToggle(' + item.idx + ', \'Off\');"';
