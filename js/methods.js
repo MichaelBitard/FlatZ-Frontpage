@@ -106,7 +106,7 @@ function RefreshSwitch(item, element) {
           if (donut) {
 
               var chart = $('#cell' + cellId + 'donut').highcharts();
-              if (typeof vdata == 'undefined') {
+              if (typeof chart == 'undefined') {
                 $('#cell' + cellId + 'donut').highcharts({
                     chart: {
                         margin: [30, 30, 30, 30],
