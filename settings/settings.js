@@ -33,12 +33,12 @@ $.Traffic = true; //false or true
 // format: idx, value (from json), replace label, description, chart label, chart color
 $.PageSwitchArray = [
     //switches (left sidebar)
-    {"idx": 163, "jsonField": "Data", "cell": 1, "label": 'Lampen Uit', 'pushButton': true},
-    {"idx": 161, "jsonField": "Data", "cell": 2, "label": 'Theme Logan', 'pushButton': true},
-    {"idx": 159, "jsonField": "Data", "cell": 3, "label": 'Theme X-Men', 'pushButton': true},
-    {"idx": 162, "jsonField": "Data", "cell": 4, "label": 'Theme Aurora', 'pushButton': true},
-    {"idx": 160, "jsonField": "Data", "cell": 5, "label": 'Theme TitanFall', 'pushButton': true},
-    {"idx": 158, "jsonField": "Data", "cell": 6, "label": 'Theme SunSet', 'pushButton': true},
+    {"idx": "163", "jsonField": "Data", "cell": 1, "label": 'Lampen Uit', 'pushButton': true},
+    {"idx": "161", "jsonField": "Data", "cell": 2, "label": 'Theme Logan', 'pushButton': true},
+    {"idx": "159", "jsonField": "Data", "cell": 3, "label": 'Theme X-Men', 'pushButton': true},
+    {"idx": "162", "jsonField": "Data", "cell": 4, "label": 'Theme Aurora', 'pushButton': true},
+    {"idx": "160", "jsonField": "Data", "cell": 5, "label": 'Theme TitanFall', 'pushButton': true},
+    {"idx": "158", "jsonField": "Data", "cell": 6, "label": 'Theme SunSet', 'pushButton': true},
 
 
 	// example for scenes & groups
@@ -51,23 +51,23 @@ $.PageSwitchArray = [
 // format: idx, value (from json), replace label, description, chart label, chart color
 $.PageDashboardArray = [
     //other devices
-    {"idx": 68, "jsonField": "Humidity", "cell" : 7, "label" : 'Vocht Badkamer', "donut": true, "donutColor": '#b2c831'},
-    {"idx": 68, "jsonField": "LastUpdate", "cell" : 70, "label" : 'Vocht Badkamer'},
+    {"idx": "68", "jsonField": "Humidity", "cell" : 7, "label" : 'Vocht Badkamer', "donut": true, "donutColor": '#b2c831'},
+    {"idx": "68", "jsonField": "LastUpdate", "cell" : 70, "label" : 'Vocht Badkamer'},
 
-    {"idx": 14, "jsonField": "Temp", "cell" : 8, "label" : 'Temperatuur Woonkamer', "donut": true, "donutColor": '#2980B9'},
-    {"idx": 14, "jsonField": "LastUpdate", "cell" : 80, "label" : 'Temperatuur Woonkamer'},
+    {"idx": "14", "jsonField": "Temp", "cell" : 8, "label" : 'Temperatuur Woonkamer', "donut": true, "donutColor": '#2980B9'},
+    {"idx": "14", "jsonField": "LastUpdate", "cell" : 80, "label" : 'Temperatuur Woonkamer'},
 
-    {"idx": 58, "jsonField": "Usage", "cell" : 9, "label" : 'Zonnepanelen (Watt)'},
-    {"idx": 58, "jsonField": "Data", "cell" : 29, "label" : 'Zonnepanelen'},
-    {"idx": 58, "jsonField": "CounterToday", "cell" : 39, "label" : 'Zonnepanelen'},
-    {"idx": 58, "jsonField": "LastUpdate", "cell" : 19, "label" : 'Zonnepanelen'},
+    {"idx": "58", "jsonField": "Usage", "cell" : 9, "label" : 'Zonnepanelen (Watt)'},
+    {"idx": "58", "jsonField": "Data", "cell" : 29, "label" : 'Zonnepanelen'},
+    {"idx": "58", "jsonField": "CounterToday", "cell" : 39, "label" : 'Zonnepanelen'},
+    {"idx": "58", "jsonField": "LastUpdate", "cell" : 19, "label" : 'Zonnepanelen'},
 
-    {"idx": 47, "jsonField": "Temp", "cell" : 10, "label" : 'Temperatuur Buiten', "donut": true, "donutColor": '#C0382B'},
-    {"idx": 47, "jsonField": "LastUpdate", "cell" : 100, "label" : 'Temperatuur Buiten'},
+    {"idx": "47", "jsonField": "Temp", "cell" : 10, "label" : 'Temperatuur Buiten', "donut": true, "donutColor": '#C0382B'},
+    {"idx": "47", "jsonField": "LastUpdate", "cell" : 100, "label" : 'Temperatuur Buiten'},
 
-    {"idx": 53, "jsonField": "Data", "cell" : 11, "label" : 'SabNZB Status'},
-    {"idx": 57, "jsonField": "Data", "cell" : 12, "label" : 'Plex Status'},
-    {"idx": 41, "jsonField": "Status", "cell" : 13, "label" : 'Ventilatie', 'arrow': true},
+    {"idx": "53", "jsonField": "Data", "cell" : 11, "label" : 'SabNZB Status'},
+    {"idx": "57", "jsonField": "Data", "cell" : 12, "label" : 'Plex Status'},
+    {"idx": "41", "jsonField": "Status", "cell" : 13, "label" : 'Ventilatie', 'arrow': true},
 ];
 
 
