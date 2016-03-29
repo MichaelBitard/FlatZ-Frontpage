@@ -105,47 +105,53 @@ function RefreshSwitch(item, element) {
           $('#desc_cell' + cellId).html(label);
           if (donut) {
 
-              $('#cell' + cellId + 'donut').highcharts({
-                  chart: {
-                      margin: [30, 30, 30, 30],
-                      backgroundColor: null,
-                      plotBackgroundColor: 'none',
-                  },
-                  credits: {
-                      enabled: false
-                  },
-                  title: {
-                      text: null
-                  },
-                  tooltip: {
-                      formatter: function() {
-                          var addUnit = vunit === "" ? ' %' : ' ' + vunit;
-                          return this.point.name + ': ' + this.y + addUnit;
-                      }
-                  },
-                  series: [{
-                      borderWidth: 2,
-                      borderColor: '#F1F3EB',
-                      shadow: false,
-                      type: 'pie',
-                      name: 'Income',
-                      innerSize: '65%',
-                      data: [{
-                          name: label,
-                          y: parseInt(vdata),
-                          color: donutColor
-                      }, {
-                          name: 'total',
-                          y: (maxDonut - vdata),
-                          color: '#3d3d3d'
-                      }],
-                      dataLabels: {
-                          enabled: false,
-                          color: '#000000',
-                          connectorColor: '#000000'
-                      }
-                  }]
-              });
+              var chart = $('#cell' + cellId + 'donut').highcharts();
+              if (typeof vdata == 'undefined') {
+                $('#cell' + cellId + 'donut').highcharts({
+                    chart: {
+                        margin: [30, 30, 30, 30],
+                        backgroundColor: null,
+                        plotBackgroundColor: 'none',
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    title: {
+                        text: null
+                    },
+                    tooltip: {
+                        formatter: function() {
+                            var addUnit = vunit === "" ? ' %' : ' ' + vunit;
+                            return this.point.name + ': ' + this.y + addUnit;
+                        }
+                    },
+                    series: [{
+                        borderWidth: 2,
+                        borderColor: '#F1F3EB',
+                        shadow: false,
+                        type: 'pie',
+                        name: 'Income',
+                        innerSize: '65%',
+                        data: [{
+                            name: label,
+                            y: parseInt(vdata),
+                            color: donutColor
+                        }, {
+                            name: 'total',
+                            y: (maxDonut - vdata),
+                            color: '#3d3d3d'
+                        }],
+                        dataLabels: {
+                            enabled: false,
+                            color: '#000000',
+                            connectorColor: '#000000'
+                        }
+                    }]
+                });
+              } else {
+                chart.series[0].data[0].update(parseInt(vdata));
+                chart.series[0].data[1].update(maxDonut - vdata);
+              }
           }
       }
   }
