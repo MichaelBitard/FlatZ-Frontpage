@@ -29,7 +29,7 @@ function RefreshSwitch(item, element) {
   if (element.idx === item.idx) { // Domoticz idx
       var jsonField = element.jsonField; // Domotitcz type (like Temp, Humidity)
       var cellId = element.cell; // cell number from HTML layout
-      var label = element.label; // description
+      var label = (typeof element.label == 'undefined') ? item.Name : element.label; // description
       var pushButton = (typeof element.pushButton == 'undefined') ? false : element.pushButton;
       var button = (typeof element.button == 'undefined') ? false : element.button;
       var type = element.type;
@@ -182,7 +182,7 @@ function RefreshScene(item, element) {
   if (element.idx === item.idx) { // Domoticz idx number
       var jsonField = element.jsonField; // Domotitcz type (like Temp, Humidity)
       var cellId = element.cell; // cell number from HTML layout
-      var label = element.label; // description
+      var label = (typeof element.label == 'undefined') ? item.Name : element.label; // description
       var type = element.type;
 
       var alarmThreshold = element.alarmThreshold;
