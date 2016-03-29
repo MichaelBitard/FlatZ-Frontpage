@@ -134,7 +134,7 @@ function RefreshSwitch(item, element) {
                         innerSize: '65%',
                         data: [{
                             name: label,
-                            y: parseInt(vdata),
+                            y: vdata,
                             color: donutColor
                         }, {
                             name: 'total',
@@ -149,7 +149,7 @@ function RefreshSwitch(item, element) {
                     }]
                 });
               } else {
-                chart.series[0].data[0].update(parseInt(vdata));
+                chart.series[0].data[0].update(vdata);
                 chart.series[0].data[1].update(maxDonut - vdata);
               }
           }
