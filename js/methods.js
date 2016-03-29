@@ -36,6 +36,7 @@ function RefreshSwitch(item, element) {
       var arrow = (typeof element.arrow == 'undefined') ? false : element.arrow;
       var extraCss = (typeof element.extracss == 'undefined') ? false : element.extracss;
       var donut = (typeof element.donut == 'undefined') ? false : element.donut;
+      var onlyDonut = (typeof element.onlyDonut == 'undefined') ? false : element.onlyDonut;
       var donutColor = element.donutColor;
       var maxDonut = (typeof element.maxDonut == 'undefined') ? 100 : element.maxDonut;
 
@@ -97,7 +98,7 @@ function RefreshSwitch(item, element) {
               }
           }
 
-          if (!arrow && !pushButton && !button) {
+          if (!arrow && !pushButton && !button && !onlyDonut) {
             var display=(vunit != "") ? vdata + ' ' + vunit : vdata;
             $('#cell' + cellId).html('<div ' + switchclick + ' style=' + extraCss + alarmcss + '>' + display + '</div>');
           }
