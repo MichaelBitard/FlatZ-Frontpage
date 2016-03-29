@@ -80,9 +80,9 @@ function RefreshSwitch(item, element) {
 
           if (arrow) {
               if (vdata == 'Off') {
-                  $('#cell' + cellId).html('<img src="images/flatz/down.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
+                  $('#cell' + cellId).html('<img src="images/down.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
               } else {
-                  $('#cell' + cellId).html('<img src="images/flatz/up.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
+                  $('#cell' + cellId).html('<img src="images/up.png" alt=""><div ' + switchclick + ' style=' + alarmcss + '>' + vdata + '</div>');
               }
           }
 
